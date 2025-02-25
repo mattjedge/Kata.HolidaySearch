@@ -38,7 +38,21 @@ namespace HolidaySearch.Tests
             var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
            
             Assert.That(results.All(x => x.LocalAirports.Contains("TFS")));
+        }
 
+        [Test]
+        public void Filters_on_departure_date()
+        {
+            var subject = new HotelSearch(_hotelData);
+            var departureDate = new DateOnly(2023, 07, 01);
+            var searchFilters = new List<IHotelFilterStrategy>
+            {
+                new DepartureDateFilterStrategy(departureDate)
+            };
+
+            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+
+            Assert.That(results.All(x => x.ArrivalDate == departureDate));
         }
 
         private static IEnumerable<HotelData> SeedHotelData()

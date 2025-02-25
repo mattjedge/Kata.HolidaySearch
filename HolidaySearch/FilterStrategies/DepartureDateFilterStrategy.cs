@@ -2,7 +2,7 @@
 
 namespace HolidaySearch.FilterStrategies
 {
-    public class DepartureDateFilterStrategy : IFlightFilterStrategy
+    public class DepartureDateFilterStrategy : IFlightFilterStrategy, IHotelFilterStrategy
     {
         private readonly DateOnly _departureDate;
 
@@ -15,6 +15,11 @@ namespace HolidaySearch.FilterStrategies
         public bool IsMatch(FlightData flight)
         {
             return flight.DepartureDate == _departureDate;
+        }
+
+        public bool IsMatch(HotelData hotel)
+        {
+            return hotel.ArrivalDate == _departureDate;
         }
     }
 }
