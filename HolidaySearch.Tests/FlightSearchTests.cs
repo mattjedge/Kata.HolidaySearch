@@ -87,6 +87,44 @@ namespace HolidaySearch.Tests
             Assert.That(result.All(x => x.DepartureDate == departureDate));
         }
 
+        [Test]
+        public void Returns_best_value_result_for_customer_one()
+        {
+            _searchFilters.Add(new DestinationFilterStrategy<FlightData>(["AGP"], flight => [flight.To]));
+            _searchFilters.Add(new DatesFilterStrategy<FlightData>(new DateOnly(2023, 07, 01), flight => flight.DepartureDate));
+            _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN"]));
+
+            var results = _subject.SearchFlights(new FlightSearchRequest(_searchFilters));
+
+            var expectedFlightId = 2;
+            Assert.That(results.First().Id, Is.EqualTo(expectedFlightId));
+        }
+
+        [Test]
+        public void Returns_best_value_result_for_customer_two()
+        {
+            _searchFilters.Add(new DestinationFilterStrategy<FlightData>(["PMI"], flight => [flight.To]));
+            _searchFilters.Add(new DatesFilterStrategy<FlightData>(new DateOnly(2023, 06, 15), flight => flight.DepartureDate));
+            _searchFilters.Add(new DepartureLocationFilterStrategy(["LTN","LGW"]));
+
+            var results = _subject.SearchFlights(new FlightSearchRequest(_searchFilters));
+
+            var expectedFlightId = 6;
+            Assert.That(results.First().Id, Is.EqualTo(expectedFlightId));
+        }
+
+        [Test]
+        public void Returns_best_value_result_for_customer_three()
+        {
+            _searchFilters.Add(new DestinationFilterStrategy<FlightData>(["LPA"], flight => [flight.To]));
+            _searchFilters.Add(new DatesFilterStrategy<FlightData>(new DateOnly(2022, 11, 10), flight => flight.DepartureDate));
+
+            var results = _subject.SearchFlights(new FlightSearchRequest(_searchFilters));
+
+            var expectedFlightId = 7;
+            Assert.That(results.First().Id, Is.EqualTo(expectedFlightId));
+        }
+
         private static IEnumerable<FlightData> SeedFlightData()
         {
             var flightDataString = File.ReadAllText(@"Data\flight-data.json");
