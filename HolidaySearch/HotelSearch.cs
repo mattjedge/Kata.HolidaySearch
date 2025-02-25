@@ -3,7 +3,7 @@ using HolidaySearch.Models;
 
 namespace HolidaySearch
 {
-    public record HotelSearchRequest(List<IHotelFilterStrategy> SearchFilters);
+    public record HotelSearchRequest(List<IFilterStrategy<HotelData>> SearchFilters);
 
     public class HotelSearch(IEnumerable<HotelData> hotels)
     {

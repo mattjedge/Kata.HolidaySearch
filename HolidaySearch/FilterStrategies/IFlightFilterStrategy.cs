@@ -7,14 +7,6 @@ namespace HolidaySearch.FilterStrategies
         bool IsMatch(T item);
     }
 
-    public interface IFlightFilterStrategy : IFilterStrategy<FlightData>
-    {
-    }
-
-    public interface IHotelFilterStrategy : IFilterStrategy<HotelData>
-    {
-    }
-
     // Flights filter on
     // DepartureLocation, TravelLocation, DepartureDate
     // Hotels filter on

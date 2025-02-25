@@ -2,7 +2,7 @@
 
 namespace HolidaySearch.FilterStrategies
 {
-    public class DestinationFilterStrategy : IFlightFilterStrategy
+    public class DestinationFilterStrategy : IFilterStrategy<FlightData>
     {
         private readonly IEnumerable<string> _destinations;
 
@@ -17,7 +17,7 @@ namespace HolidaySearch.FilterStrategies
         }
     }
 
-    public class HotelDestinationFilterStrategy : IHotelFilterStrategy
+    public class HotelDestinationFilterStrategy : IFilterStrategy<HotelData>
     {
         private readonly IEnumerable<string> _destinations;
 

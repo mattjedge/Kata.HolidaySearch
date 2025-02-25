@@ -8,7 +8,7 @@ namespace HolidaySearch.Tests
     {
         private IEnumerable<FlightData> _flightData;
         private FlightSearch _subject;
-        private List<IFlightFilterStrategy> _searchFilters;
+        private List<IFilterStrategy<FlightData>> _searchFilters;
 
         [SetUp]
         public void Setup()
@@ -79,7 +79,7 @@ namespace HolidaySearch.Tests
         public void Filter_search_on_departure_date()
         {
             var departureDate = new DateOnly(2023, 07, 01);
-            _searchFilters.Add(new DepartureDateFilterStrategy(departureDate));
+            _searchFilters.Add(new DatesFilterStrategy<FlightData>(departureDate, flight => flight.DepartureDate));
             var searchRequest = new FlightSearchRequest(_searchFilters);
 
             var result = _subject.SearchFlights(searchRequest);

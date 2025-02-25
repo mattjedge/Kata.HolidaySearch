@@ -30,7 +30,7 @@ namespace HolidaySearch.Tests
         {
             var subject = new HotelSearch(_hotelData);
             var destinationFilter = new HotelDestinationFilterStrategy(["TFS"]);
-            var searchFilters = new List<IHotelFilterStrategy>
+            var searchFilters = new List<IFilterStrategy<HotelData>>
             {
                 new HotelDestinationFilterStrategy(["TFS"])
             };
@@ -45,9 +45,9 @@ namespace HolidaySearch.Tests
         {
             var subject = new HotelSearch(_hotelData);
             var departureDate = new DateOnly(2023, 07, 01);
-            var searchFilters = new List<IHotelFilterStrategy>
+            var searchFilters = new List<IFilterStrategy<HotelData>>
             {
-                new DepartureDateFilterStrategy(departureDate)
+                new DatesFilterStrategy<HotelData>(departureDate, hotel => hotel.ArrivalDate)
             };
 
             var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
