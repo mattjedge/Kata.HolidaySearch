@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/HolidaySearch/.vs/HolidaySearch
+/HolidaySearch.Tests/obj/Debug/net8.0
+/HolidaySearch/obj/Debug/net8.0
+/HolidaySearch/obj
+/HolidaySearch.Tests/obj
