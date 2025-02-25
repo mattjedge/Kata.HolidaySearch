@@ -54,6 +54,21 @@ namespace HolidaySearch.Tests
             Assert.That(results.All(x => x.ArrivalDate == departureDate));
         }
 
+        [Test]
+        public void Filters_on_holiday_duration()
+        {
+            var subject = new HotelSearch(_hotelData);
+            var numberOfNights = 7;
+            var searchFilters = new List<IFilterStrategy<HotelData>>
+            {
+                new DurationFilterStrategy(numberOfNights)
+            };
+
+            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+
+            Assert.That(results.All(x => x.NumberOfNights == numberOfNights));
+        }
+
         private static IEnumerable<HotelData> SeedHotelData()
         {
             var hotelDataString = File.ReadAllText(@"Data\hotel-data.json");
