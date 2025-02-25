@@ -41,7 +41,12 @@ namespace HolidaySearch.Tests
         public void FlightSearch_only_returns_flights_departing_from_request_destination()
         {
             var flightSearch = new FlightSearch(_flightData);
-            var searchRequest = new FlightSearchRequest(["MAN"]);
+            var searchFilters = new List<IFilterStrategy>
+            {
+                new DepartureFilterStrategy(["MAN"])
+            };
+
+            var searchRequest = new FlightSearchRequest(searchFilters);
 
             var result = flightSearch.SearchFlights(searchRequest);
 
@@ -52,7 +57,11 @@ namespace HolidaySearch.Tests
         public void Multiple_departure_locations_is_supported()
         {
             var flightSearch = new FlightSearch(_flightData);
-            var searchRequest = new FlightSearchRequest(["MAN", "LTN"]);
+            var searchFilters = new List<IFilterStrategy>
+            {
+                new DepartureFilterStrategy(["MAN", "LTN"])
+            };
+            var searchRequest = new FlightSearchRequest(searchFilters);
 
             var result = flightSearch.SearchFlights(searchRequest);
 
@@ -64,7 +73,12 @@ namespace HolidaySearch.Tests
         public void FlightSearch_returns_best_value_offer_as_first_result()
         {
             var flightSearch = new FlightSearch(_flightData);
-            var searchRequest = new FlightSearchRequest(["MAN"]);
+            var searchFilters = new List<IFilterStrategy>
+            {
+                new DepartureFilterStrategy(["MAN"])
+            };
+
+            var searchRequest = new FlightSearchRequest(searchFilters);
 
             var result = flightSearch.SearchFlights(searchRequest);
 
@@ -76,8 +90,14 @@ namespace HolidaySearch.Tests
         public void Filter_search_on_travel_destination()
         {
             var flightSearch = new FlightSearch(_flightData);
-            var searchRequest = new FlightSearchRequest(["MAN"], "AGP");
-            
+            var searchFilters = new List<IFilterStrategy>
+            {
+                new DepartureFilterStrategy(["MAN"]),
+                new DestinationFilterStrategy(["AGP"])
+            };
+
+            var searchRequest = new FlightSearchRequest(searchFilters);
+
             var result = flightSearch.SearchFlights(searchRequest);
 
             Assert.That(result.All(x => x.To == "AGP"));
