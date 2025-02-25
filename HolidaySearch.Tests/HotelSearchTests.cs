@@ -1,5 +1,6 @@
 ﻿using HolidaySearch.FilterStrategies;
 using HolidaySearch.Models;
+using HolidaySearch.Search;
 using System.Text.Json;
 
 namespace HolidaySearch.Tests
@@ -7,11 +8,15 @@ namespace HolidaySearch.Tests
     internal class HotelSearchTests
     {
         private IEnumerable<HotelData> _hotelData;
+        private HotelSearch _subject;
+        private List<IFilterStrategy<HotelData>> _searchFilters;
 
         [SetUp]
         public void Setup()
         {
             _hotelData = SeedHotelData();
+            _subject = new HotelSearch(_hotelData);
+            _searchFilters = [];
         }
 
         [Test]
@@ -28,13 +33,9 @@ namespace HolidaySearch.Tests
         [Test]
         public void Filters_on_travel_destination()
         {
-            var subject = new HotelSearch(_hotelData);
-            var searchFilters = new List<IFilterStrategy<HotelData>>
-            {
-                new DestinationFilterStrategy<HotelData>(["TFS"], hotel => hotel.LocalAirports)
-            };
-            
-            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+            _searchFilters.Add(new DestinationFilterStrategy<HotelData>(["TFS"], hotel => hotel.LocalAirports));
+
+            var results = _subject.Search(_searchFilters);
            
             Assert.That(results.All(x => x.LocalAirports.Contains("TFS")));
         }
@@ -42,14 +43,10 @@ namespace HolidaySearch.Tests
         [Test]
         public void Filters_on_departure_date()
         {
-            var subject = new HotelSearch(_hotelData);
             var departureDate = new DateOnly(2023, 07, 01);
-            var searchFilters = new List<IFilterStrategy<HotelData>>
-            {
-                new DatesFilterStrategy<HotelData>(departureDate, hotel => hotel.ArrivalDate)
-            };
+            _searchFilters.Add(new DatesFilterStrategy<HotelData>(departureDate, hotel => hotel.ArrivalDate));
 
-            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+            var results = _subject.Search(_searchFilters);
 
             Assert.That(results.All(x => x.ArrivalDate == departureDate));
         }
@@ -57,14 +54,10 @@ namespace HolidaySearch.Tests
         [Test]
         public void Filters_on_holiday_duration()
         {
-            var subject = new HotelSearch(_hotelData);
             var numberOfNights = 7;
-            var searchFilters = new List<IFilterStrategy<HotelData>>
-            {
-                new DurationFilterStrategy(numberOfNights)
-            };
+            _searchFilters.Add(new DurationFilterStrategy(numberOfNights));
 
-            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+            var results = _subject.Search(_searchFilters);
 
             Assert.That(results.All(x => x.NumberOfNights == numberOfNights));
         }
@@ -72,15 +65,11 @@ namespace HolidaySearch.Tests
         [Test]
         public void Returns_best_value_result_for_customer_one()
         {
-            var subject = new HotelSearch(_hotelData);
-            var searchFilters = new List<IFilterStrategy<HotelData>>
-            {
-                new DurationFilterStrategy(7),
-                new DestinationFilterStrategy<HotelData>(["AGP"], hotel => hotel.LocalAirports),
-                new DatesFilterStrategy<HotelData>(new DateOnly(2023, 07, 01), hotel => hotel.ArrivalDate)
-            };
+            _searchFilters.Add(new DurationFilterStrategy(7));
+            _searchFilters.Add(new DestinationFilterStrategy<HotelData>(["AGP"], hotel => hotel.LocalAirports));
+            _searchFilters.Add(new DatesFilterStrategy<HotelData>(new DateOnly(2023, 07, 01), hotel => hotel.ArrivalDate));
 
-            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+            var results = _subject.Search(_searchFilters);
 
             var expectedHotelId = 9;
             Assert.That(results.First().Id, Is.EqualTo(expectedHotelId));
@@ -89,15 +78,11 @@ namespace HolidaySearch.Tests
         [Test]
         public void Returns_best_value_result_for_customer_two()
         {
-            var subject = new HotelSearch(_hotelData);
-            var searchFilters = new List<IFilterStrategy<HotelData>>
-            {
-                new DurationFilterStrategy(10),
-                new DestinationFilterStrategy<HotelData>(["PMI"], hotel => hotel.LocalAirports),
-                new DatesFilterStrategy<HotelData>(new DateOnly(2023, 06, 15), hotel => hotel.ArrivalDate)
-            };
+            _searchFilters.Add(new DurationFilterStrategy(10));
+            _searchFilters.Add(new DestinationFilterStrategy<HotelData>(["PMI"], hotel => hotel.LocalAirports));
+            _searchFilters.Add(new DatesFilterStrategy<HotelData>(new DateOnly(2023, 06, 15), hotel => hotel.ArrivalDate));
 
-            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+            var results = _subject.Search(_searchFilters);
 
             var expectedHotelId = 5;
             Assert.That(results.First().Id, Is.EqualTo(expectedHotelId));
@@ -106,15 +91,11 @@ namespace HolidaySearch.Tests
         [Test]
         public void Returns_best_value_result_for_customer_three()
         {
-            var subject = new HotelSearch(_hotelData);
-            var searchFilters = new List<IFilterStrategy<HotelData>>
-            {
-                new DurationFilterStrategy(14),
-                new DestinationFilterStrategy<HotelData>(["LPA"], hotel => hotel.LocalAirports),
-                new DatesFilterStrategy<HotelData>(new DateOnly(2022, 11, 10), hotel => hotel.ArrivalDate)
-            };
+            _searchFilters.Add(new DurationFilterStrategy(14));
+            _searchFilters.Add(new DestinationFilterStrategy<HotelData>(["LPA"], hotel => hotel.LocalAirports));
+            _searchFilters.Add(new DatesFilterStrategy<HotelData>(new DateOnly(2022, 11, 10), hotel => hotel.ArrivalDate));
 
-            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+            var results = _subject.Search(_searchFilters);
 
             var expectedHotelId = 6;
             Assert.That(results.First().Id, Is.EqualTo(expectedHotelId));

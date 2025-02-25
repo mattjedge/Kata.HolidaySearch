@@ -1,5 +1,6 @@
 using HolidaySearch.FilterStrategies;
 using HolidaySearch.Models;
+using HolidaySearch.Search;
 using System.Text.Json;
 
 namespace HolidaySearch.Tests
@@ -33,9 +34,8 @@ namespace HolidaySearch.Tests
         public void FlightSearch_only_returns_flights_departing_from_request_destination()
         {
             _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN"]));
-            var searchRequest = new FlightSearchRequest(_searchFilters);
-
-            var result = _subject.SearchFlights(searchRequest);
+            
+            var result = _subject.Search(_searchFilters);
 
             Assert.That(result.All(x => x.From == "MAN"));
         }
@@ -44,9 +44,8 @@ namespace HolidaySearch.Tests
         public void Multiple_departure_locations_is_supported()
         {
             _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN", "LTN"]));
-            var searchRequest = new FlightSearchRequest(_searchFilters);
 
-            var result = _subject.SearchFlights(searchRequest);
+            var result = _subject.Search(_searchFilters);
 
             Assert.That(result.All(x => x.From == "MAN" || x.From == "LTN"));
         }
@@ -55,9 +54,8 @@ namespace HolidaySearch.Tests
         public void FlightSearch_returns_best_value_offer_as_first_result()
         {
             _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN"]));
-            var searchRequest = new FlightSearchRequest(_searchFilters);
 
-            var result = _subject.SearchFlights(searchRequest);
+            var result = _subject.Search(_searchFilters);
 
             var idOfCheapestManchesterDeparture = 7;
             Assert.That(result.First().Id, Is.EqualTo(idOfCheapestManchesterDeparture));
@@ -68,9 +66,8 @@ namespace HolidaySearch.Tests
         {
             _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN"]));
             _searchFilters.Add(new DestinationFilterStrategy<FlightData>(["AGP"], flight => [flight.To]));
-            var searchRequest = new FlightSearchRequest(_searchFilters);
-
-            var result = _subject.SearchFlights(searchRequest);
+            
+            var result = _subject.Search(_searchFilters);
 
             Assert.That(result.All(x => x.To == "AGP"));
         }
@@ -80,9 +77,8 @@ namespace HolidaySearch.Tests
         {
             var departureDate = new DateOnly(2023, 07, 01);
             _searchFilters.Add(new DatesFilterStrategy<FlightData>(departureDate, flight => flight.DepartureDate));
-            var searchRequest = new FlightSearchRequest(_searchFilters);
 
-            var result = _subject.SearchFlights(searchRequest);
+            var result = _subject.Search(_searchFilters);
 
             Assert.That(result.All(x => x.DepartureDate == departureDate));
         }
@@ -94,7 +90,7 @@ namespace HolidaySearch.Tests
             _searchFilters.Add(new DatesFilterStrategy<FlightData>(new DateOnly(2023, 07, 01), flight => flight.DepartureDate));
             _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN"]));
 
-            var results = _subject.SearchFlights(new FlightSearchRequest(_searchFilters));
+            var results = _subject.Search(_searchFilters);
 
             var expectedFlightId = 2;
             Assert.That(results.First().Id, Is.EqualTo(expectedFlightId));
@@ -107,7 +103,7 @@ namespace HolidaySearch.Tests
             _searchFilters.Add(new DatesFilterStrategy<FlightData>(new DateOnly(2023, 06, 15), flight => flight.DepartureDate));
             _searchFilters.Add(new DepartureLocationFilterStrategy(["LTN","LGW"]));
 
-            var results = _subject.SearchFlights(new FlightSearchRequest(_searchFilters));
+            var results = _subject.Search(_searchFilters);
 
             var expectedFlightId = 6;
             Assert.That(results.First().Id, Is.EqualTo(expectedFlightId));
@@ -119,7 +115,7 @@ namespace HolidaySearch.Tests
             _searchFilters.Add(new DestinationFilterStrategy<FlightData>(["LPA"], flight => [flight.To]));
             _searchFilters.Add(new DatesFilterStrategy<FlightData>(new DateOnly(2022, 11, 10), flight => flight.DepartureDate));
 
-            var results = _subject.SearchFlights(new FlightSearchRequest(_searchFilters));
+            var results = _subject.Search(_searchFilters);
 
             var expectedFlightId = 7;
             Assert.That(results.First().Id, Is.EqualTo(expectedFlightId));
