@@ -10,6 +10,6 @@ namespace HolidaySearch.Models
         public string To { get; set; }
         public int Price { get; set; }
         [JsonPropertyName("departure_date")]
-        public DateOnly Departure_Date { get; set; }
+        public DateOnly DepartureDate { get; set; }
     }
 }

@@ -4,16 +4,14 @@ using System.Text.Json;
 
 namespace HolidaySearch.Tests
 {
-    internal class HolidaySearchTests
+    internal class FlightSearchTests
     {
         private IEnumerable<FlightData> _flightData;
-        private IEnumerable<HotelData> _hotelData;
 
         [SetUp]
         public void Setup()
         {
             _flightData = SeedFlightData();
-            _hotelData = SeedHotelData();
         }        
 
         [Test]
@@ -24,18 +22,7 @@ namespace HolidaySearch.Tests
             Assert.That(_flightData.First().From, Is.EqualTo("MAN"));
             Assert.That(_flightData.First().To, Is.EqualTo("TFS"));
             Assert.That(_flightData.First().Price, Is.EqualTo(470));
-            Assert.That(_flightData.First().Departure_Date, Is.EqualTo(new DateOnly(2023, 07, 01)));
-        }
-
-        [Test]
-        public void HotelData_maps_to_model()
-        {
-            Assert.That(_hotelData.First().Id, Is.EqualTo(1));
-            Assert.That(_hotelData.First().Name, Is.EqualTo("Iberostar Grand Portals Nous"));
-            Assert.That(_hotelData.First().ArrivalDate, Is.EqualTo(new DateOnly(2022, 11, 05)));
-            Assert.That(_hotelData.First().PricePerNight, Is.EqualTo(100));
-            Assert.That(_hotelData.First().LocalAirports.Contains("TFS"));
-            Assert.That(_hotelData.First().NumberOfNights, Is.EqualTo(7));
+            Assert.That(_flightData.First().DepartureDate, Is.EqualTo(new DateOnly(2023, 07, 01)));
         }
 
         [Test]
@@ -44,7 +31,7 @@ namespace HolidaySearch.Tests
             var flightSearch = new FlightSearch(_flightData);
             var searchFilters = new List<IFilterStrategy>
             {
-                new DepartureFilterStrategy(["MAN"])
+                new DepartureLocationFilterStrategy(["MAN"])
             };
 
             var searchRequest = new FlightSearchRequest(searchFilters);
@@ -60,7 +47,7 @@ namespace HolidaySearch.Tests
             var flightSearch = new FlightSearch(_flightData);
             var searchFilters = new List<IFilterStrategy>
             {
-                new DepartureFilterStrategy(["MAN", "LTN"])
+                new DepartureLocationFilterStrategy(["MAN", "LTN"])
             };
             var searchRequest = new FlightSearchRequest(searchFilters);
 
@@ -76,7 +63,7 @@ namespace HolidaySearch.Tests
             var flightSearch = new FlightSearch(_flightData);
             var searchFilters = new List<IFilterStrategy>
             {
-                new DepartureFilterStrategy(["MAN"])
+                new DepartureLocationFilterStrategy(["MAN"])
             };
 
             var searchRequest = new FlightSearchRequest(searchFilters);
@@ -93,7 +80,7 @@ namespace HolidaySearch.Tests
             var flightSearch = new FlightSearch(_flightData);
             var searchFilters = new List<IFilterStrategy>
             {
-                new DepartureFilterStrategy(["MAN"]),
+                new DepartureLocationFilterStrategy(["MAN"]),
                 new DestinationFilterStrategy(["AGP"])
             };
 
@@ -104,10 +91,21 @@ namespace HolidaySearch.Tests
             Assert.That(result.All(x => x.To == "AGP"));
         }
 
-        private static IEnumerable<HotelData> SeedHotelData()
+        [Test]
+        public void Filter_search_on_departure_date()
         {
-            var hotelDataString = File.ReadAllText(@"Data\hotel-data.json");
-            return JsonSerializer.Deserialize<IEnumerable<HotelData>>(hotelDataString, new JsonSerializerOptions {  PropertyNameCaseInsensitive = true});
+            var flightSearch = new FlightSearch(_flightData);
+            var departureDate = new DateOnly(2023, 07, 01);
+            var searchFilters = new List<IFilterStrategy>
+            {
+                new DepartureDateFilterStrategy(departureDate),
+            };
+
+            var searchRequest = new FlightSearchRequest(searchFilters);
+
+            var result = flightSearch.SearchFlights(searchRequest);
+
+            Assert.That(result.All(x => x.DepartureDate == departureDate));
         }
 
         private static IEnumerable<FlightData> SeedFlightData()
