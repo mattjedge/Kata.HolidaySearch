@@ -1,6 +1,5 @@
 using HolidaySearch.Models;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace HolidaySearch.Tests
 {
@@ -71,6 +70,17 @@ namespace HolidaySearch.Tests
 
             var idOfCheapestManchesterDeparture = 7;
             Assert.That(result.First().Id, Is.EqualTo(idOfCheapestManchesterDeparture));
+        }
+
+        [Test]
+        public void Filter_search_on_travel_destination()
+        {
+            var flightSearch = new FlightSearch(_flightData);
+            var searchRequest = new FlightSearchRequest(["MAN"], "AGP");
+            
+            var result = flightSearch.SearchFlights(searchRequest);
+
+            Assert.That(result.All(x => x.To == "AGP"));
         }
 
         private static IEnumerable<HotelData> SeedHotelData()

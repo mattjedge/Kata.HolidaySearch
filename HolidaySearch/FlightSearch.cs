@@ -2,7 +2,7 @@
 
 namespace HolidaySearch
 {
-    public record FlightSearchRequest(IEnumerable<string> DepartingFrom);
+    public record FlightSearchRequest(IEnumerable<string> DepartingFrom, string TravelingTo = null);
 
     public class FlightSearch(IEnumerable<FlightData> flights)
     {
@@ -10,6 +10,7 @@ namespace HolidaySearch
         {
             return flights
                 .Where(x => request.DepartingFrom.Contains(x.From))
+                .Where(x => request.TravelingTo == null || x.To == request.TravelingTo)
                 .OrderBy(x => x.Price);
         }
     }
