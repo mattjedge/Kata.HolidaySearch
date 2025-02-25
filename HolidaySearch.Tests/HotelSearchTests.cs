@@ -69,6 +69,57 @@ namespace HolidaySearch.Tests
             Assert.That(results.All(x => x.NumberOfNights == numberOfNights));
         }
 
+        [Test]
+        public void Returns_best_value_result_for_customer_one()
+        {
+            var subject = new HotelSearch(_hotelData);
+            var searchFilters = new List<IFilterStrategy<HotelData>>
+            {
+                new DurationFilterStrategy(7),
+                new DestinationFilterStrategy<HotelData>(["AGP"], hotel => hotel.LocalAirports),
+                new DatesFilterStrategy<HotelData>(new DateOnly(2023, 07, 01), hotel => hotel.ArrivalDate)
+            };
+
+            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+
+            var expectedHotelId = 9;
+            Assert.That(results.First().Id, Is.EqualTo(expectedHotelId));
+        }
+
+        [Test]
+        public void Returns_best_value_result_for_customer_two()
+        {
+            var subject = new HotelSearch(_hotelData);
+            var searchFilters = new List<IFilterStrategy<HotelData>>
+            {
+                new DurationFilterStrategy(10),
+                new DestinationFilterStrategy<HotelData>(["PMI"], hotel => hotel.LocalAirports),
+                new DatesFilterStrategy<HotelData>(new DateOnly(2023, 06, 15), hotel => hotel.ArrivalDate)
+            };
+
+            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+
+            var expectedHotelId = 5;
+            Assert.That(results.First().Id, Is.EqualTo(expectedHotelId));
+        }
+
+        [Test]
+        public void Returns_best_value_result_for_customer_three()
+        {
+            var subject = new HotelSearch(_hotelData);
+            var searchFilters = new List<IFilterStrategy<HotelData>>
+            {
+                new DurationFilterStrategy(14),
+                new DestinationFilterStrategy<HotelData>(["LPA"], hotel => hotel.LocalAirports),
+                new DatesFilterStrategy<HotelData>(new DateOnly(2022, 11, 10), hotel => hotel.ArrivalDate)
+            };
+
+            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+
+            var expectedHotelId = 6;
+            Assert.That(results.First().Id, Is.EqualTo(expectedHotelId));
+        }
+
         private static IEnumerable<HotelData> SeedHotelData()
         {
             var hotelDataString = File.ReadAllText(@"Data\hotel-data.json");

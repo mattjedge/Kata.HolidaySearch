@@ -15,7 +15,7 @@ namespace HolidaySearch
                 query = query.Where(filter.IsMatch);
             }
 
-            return query;
+            return query.OrderBy(x => x.PricePerNight);
         }
     }
 }
