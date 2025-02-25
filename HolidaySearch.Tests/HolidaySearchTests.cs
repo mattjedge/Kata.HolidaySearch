@@ -39,7 +39,7 @@ namespace HolidaySearch.Tests
         }
 
         [Test]
-        public async Task FlightSearch_only_returns_flights_departing_from_request_destination()
+        public void FlightSearch_only_returns_flights_departing_from_request_destination()
         {
             var flightSearch = new FlightSearch(_flightData);
             var searchRequest = new FlightSearchRequest("MAN");
@@ -47,6 +47,19 @@ namespace HolidaySearch.Tests
             var result = flightSearch.SearchFlights(searchRequest);
 
             Assert.That(result.All(x => x.From == "MAN"));
+        }
+
+        [Test]
+        // Requirement validation needed - what constitutes best value? Cheapest?
+        public void FlightSearch_returns_best_value_offer_as_first_result()
+        {
+            var flightSearch = new FlightSearch(_flightData);
+            var searchRequest = new FlightSearchRequest("MAN");
+
+            var result = flightSearch.SearchFlights(searchRequest);
+
+            var idOfCheapestManchesterDeparture = 7;
+            Assert.That(result.First().Id, Is.EqualTo(idOfCheapestManchesterDeparture));
         }
 
         private static IEnumerable<HotelData> SeedHotelData()
