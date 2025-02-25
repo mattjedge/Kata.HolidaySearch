@@ -1,10 +1,6 @@
-﻿using HolidaySearch.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using HolidaySearch.FilterStrategies;
+using HolidaySearch.Models;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace HolidaySearch.Tests
 {
@@ -27,6 +23,22 @@ namespace HolidaySearch.Tests
             Assert.That(_hotelData.First().PricePerNight, Is.EqualTo(100));
             Assert.That(_hotelData.First().LocalAirports.Contains("TFS"));
             Assert.That(_hotelData.First().NumberOfNights, Is.EqualTo(7));
+        }
+
+        [Test]
+        public void Filters_on_travel_destination()
+        {
+            var subject = new HotelSearch(_hotelData);
+            var destinationFilter = new HotelDestinationFilterStrategy(["TFS"]);
+            var searchFilters = new List<IHotelFilterStrategy>
+            {
+                new HotelDestinationFilterStrategy(["TFS"])
+            };
+            
+            var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));
+           
+            Assert.That(results.All(x => x.LocalAirports.Contains("TFS")));
+
         }
 
         private static IEnumerable<HotelData> SeedHotelData()

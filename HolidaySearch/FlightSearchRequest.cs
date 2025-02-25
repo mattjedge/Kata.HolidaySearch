@@ -2,5 +2,5 @@
 
 namespace HolidaySearch
 {
-    public record FlightSearchRequest(IEnumerable<IFilterStrategy> SearchFilters);
+    public record FlightSearchRequest(IEnumerable<IFlightFilterStrategy> SearchFilters);
 }

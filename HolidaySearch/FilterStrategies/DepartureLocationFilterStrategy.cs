@@ -2,7 +2,7 @@
 
 namespace HolidaySearch.FilterStrategies
 {
-    public class DepartureLocationFilterStrategy : IFilterStrategy
+    public class DepartureLocationFilterStrategy : IFlightFilterStrategy
     {
         private readonly IEnumerable<string> _departureLocations;
 

@@ -2,7 +2,7 @@
 
 namespace HolidaySearch.FilterStrategies
 {
-    public class DepartureDateFilterStrategy : IFilterStrategy
+    public class DepartureDateFilterStrategy : IFlightFilterStrategy
     {
         private readonly DateOnly _departureDate;
 

@@ -8,7 +8,7 @@ namespace HolidaySearch.Tests
     {
         private IEnumerable<FlightData> _flightData;
         private FlightSearch _subject;
-        private List<IFilterStrategy> _searchFilters;
+        private List<IFlightFilterStrategy> _searchFilters;
 
         [SetUp]
         public void Setup()
