@@ -7,11 +7,15 @@ namespace HolidaySearch.Tests
     internal class FlightSearchTests
     {
         private IEnumerable<FlightData> _flightData;
+        private FlightSearch _subject;
+        private List<IFilterStrategy> _searchFilters;
 
         [SetUp]
         public void Setup()
         {
             _flightData = SeedFlightData();
+            _subject = new FlightSearch(_flightData);
+            _searchFilters = [];
         }        
 
         [Test]
@@ -28,15 +32,10 @@ namespace HolidaySearch.Tests
         [Test]
         public void FlightSearch_only_returns_flights_departing_from_request_destination()
         {
-            var flightSearch = new FlightSearch(_flightData);
-            var searchFilters = new List<IFilterStrategy>
-            {
-                new DepartureLocationFilterStrategy(["MAN"])
-            };
+            _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN"]));
+            var searchRequest = new FlightSearchRequest(_searchFilters);
 
-            var searchRequest = new FlightSearchRequest(searchFilters);
-
-            var result = flightSearch.SearchFlights(searchRequest);
+            var result = _subject.SearchFlights(searchRequest);
 
             Assert.That(result.All(x => x.From == "MAN"));
         }
@@ -44,31 +43,21 @@ namespace HolidaySearch.Tests
         [Test]
         public void Multiple_departure_locations_is_supported()
         {
-            var flightSearch = new FlightSearch(_flightData);
-            var searchFilters = new List<IFilterStrategy>
-            {
-                new DepartureLocationFilterStrategy(["MAN", "LTN"])
-            };
-            var searchRequest = new FlightSearchRequest(searchFilters);
+            _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN", "LTN"]));
+            var searchRequest = new FlightSearchRequest(_searchFilters);
 
-            var result = flightSearch.SearchFlights(searchRequest);
+            var result = _subject.SearchFlights(searchRequest);
 
             Assert.That(result.All(x => x.From == "MAN" || x.From == "LTN"));
         }
 
         [Test]
-        // Requirement validation needed - what constitutes best value? Cheapest?
         public void FlightSearch_returns_best_value_offer_as_first_result()
         {
-            var flightSearch = new FlightSearch(_flightData);
-            var searchFilters = new List<IFilterStrategy>
-            {
-                new DepartureLocationFilterStrategy(["MAN"])
-            };
+            _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN"]));
+            var searchRequest = new FlightSearchRequest(_searchFilters);
 
-            var searchRequest = new FlightSearchRequest(searchFilters);
-
-            var result = flightSearch.SearchFlights(searchRequest);
+            var result = _subject.SearchFlights(searchRequest);
 
             var idOfCheapestManchesterDeparture = 7;
             Assert.That(result.First().Id, Is.EqualTo(idOfCheapestManchesterDeparture));
@@ -77,16 +66,11 @@ namespace HolidaySearch.Tests
         [Test]
         public void Filter_search_on_travel_destination()
         {
-            var flightSearch = new FlightSearch(_flightData);
-            var searchFilters = new List<IFilterStrategy>
-            {
-                new DepartureLocationFilterStrategy(["MAN"]),
-                new DestinationFilterStrategy(["AGP"])
-            };
+            _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN"]));
+            _searchFilters.Add(new DestinationFilterStrategy(["AGP"]));
+            var searchRequest = new FlightSearchRequest(_searchFilters);
 
-            var searchRequest = new FlightSearchRequest(searchFilters);
-
-            var result = flightSearch.SearchFlights(searchRequest);
+            var result = _subject.SearchFlights(searchRequest);
 
             Assert.That(result.All(x => x.To == "AGP"));
         }
@@ -94,16 +78,11 @@ namespace HolidaySearch.Tests
         [Test]
         public void Filter_search_on_departure_date()
         {
-            var flightSearch = new FlightSearch(_flightData);
             var departureDate = new DateOnly(2023, 07, 01);
-            var searchFilters = new List<IFilterStrategy>
-            {
-                new DepartureDateFilterStrategy(departureDate),
-            };
+            _searchFilters.Add(new DepartureDateFilterStrategy(departureDate));
+            var searchRequest = new FlightSearchRequest(_searchFilters);
 
-            var searchRequest = new FlightSearchRequest(searchFilters);
-
-            var result = flightSearch.SearchFlights(searchRequest);
+            var result = _subject.SearchFlights(searchRequest);
 
             Assert.That(result.All(x => x.DepartureDate == departureDate));
         }
