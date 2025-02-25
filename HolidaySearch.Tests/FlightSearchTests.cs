@@ -67,7 +67,7 @@ namespace HolidaySearch.Tests
         public void Filter_search_on_travel_destination()
         {
             _searchFilters.Add(new DepartureLocationFilterStrategy(["MAN"]));
-            _searchFilters.Add(new DestinationFilterStrategy(["AGP"]));
+            _searchFilters.Add(new DestinationFilterStrategy<FlightData>(["AGP"], flight => [flight.To]));
             var searchRequest = new FlightSearchRequest(_searchFilters);
 
             var result = _subject.SearchFlights(searchRequest);

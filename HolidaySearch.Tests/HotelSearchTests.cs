@@ -29,10 +29,9 @@ namespace HolidaySearch.Tests
         public void Filters_on_travel_destination()
         {
             var subject = new HotelSearch(_hotelData);
-            var destinationFilter = new HotelDestinationFilterStrategy(["TFS"]);
             var searchFilters = new List<IFilterStrategy<HotelData>>
             {
-                new HotelDestinationFilterStrategy(["TFS"])
+                new DestinationFilterStrategy<HotelData>(["TFS"], hotel => hotel.LocalAirports)
             };
             
             var results = subject.SearchHotels(new HotelSearchRequest(searchFilters));

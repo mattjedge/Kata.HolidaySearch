@@ -1,6 +1,4 @@
-﻿using HolidaySearch.Models;
-
-namespace HolidaySearch.FilterStrategies
+﻿namespace HolidaySearch.FilterStrategies
 {
     public interface IFilterStrategy<T>
     {

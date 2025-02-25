@@ -1,34 +1,19 @@
-﻿using HolidaySearch.Models;
-
-namespace HolidaySearch.FilterStrategies
+﻿namespace HolidaySearch.FilterStrategies
 {
-    public class DestinationFilterStrategy : IFilterStrategy<FlightData>
+    public class DestinationFilterStrategy<T> : IFilterStrategy<T>
     {
         private readonly IEnumerable<string> _destinations;
+        private readonly Func<T, IEnumerable<string>> _itemDestinations;
 
-        public DestinationFilterStrategy(IEnumerable<string> destinations)
+        public DestinationFilterStrategy(IEnumerable<string> destinations, Func<T, IEnumerable<string>> itemDestinations)
         {
             _destinations = destinations;
+            _itemDestinations = itemDestinations;
         }
 
-        public bool IsMatch(FlightData flight)
+        public bool IsMatch(T item)
         {
-            return _destinations.Contains(flight.To);
-        }
-    }
-
-    public class HotelDestinationFilterStrategy : IFilterStrategy<HotelData>
-    {
-        private readonly IEnumerable<string> _destinations;
-
-        public HotelDestinationFilterStrategy(IEnumerable<string> destinations)
-        {
-            _destinations = destinations;
-        }
-
-        public bool IsMatch(HotelData hotel)
-        {
-            return hotel.LocalAirports.Any(airport => _destinations.Contains(airport));
+            return _itemDestinations(item).Any(destination => _destinations.Contains(destination));
         }
     }
 }
