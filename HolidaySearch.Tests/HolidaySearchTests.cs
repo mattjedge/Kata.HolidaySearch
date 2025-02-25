@@ -42,7 +42,7 @@ namespace HolidaySearch.Tests
         public void FlightSearch_only_returns_flights_departing_from_request_destination()
         {
             var flightSearch = new FlightSearch(_flightData);
-            var searchRequest = new FlightSearchRequest("MAN");
+            var searchRequest = new FlightSearchRequest(["MAN"]);
 
             var result = flightSearch.SearchFlights(searchRequest);
 
@@ -50,11 +50,22 @@ namespace HolidaySearch.Tests
         }
 
         [Test]
+        public void Multiple_departure_locations_is_supported()
+        {
+            var flightSearch = new FlightSearch(_flightData);
+            var searchRequest = new FlightSearchRequest(["MAN", "LTN"]);
+
+            var result = flightSearch.SearchFlights(searchRequest);
+
+            Assert.That(result.All(x => x.From == "MAN" || x.From == "LTN"));
+        }
+
+        [Test]
         // Requirement validation needed - what constitutes best value? Cheapest?
         public void FlightSearch_returns_best_value_offer_as_first_result()
         {
             var flightSearch = new FlightSearch(_flightData);
-            var searchRequest = new FlightSearchRequest("MAN");
+            var searchRequest = new FlightSearchRequest(["MAN"]);
 
             var result = flightSearch.SearchFlights(searchRequest);
 
