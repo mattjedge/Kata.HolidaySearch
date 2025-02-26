@@ -1,6 +1,14 @@
 # Kata.HolidaySearch
 Interview kata (Feb 2025)
 
+## Future Development / Final Notes
+* Holiday/Flight searches could be run asynchronously or in parallel 
+* IQueryable would be more suitable for equivalent real world scenario against larger datasets, but IEnumerable performant enough for provided sample data. 
+* No guards or tests around filtering that result in no results
+* Current test suites all focused around happy path, would flesh out more test cases with more time
+* I kept toying with the idea of introducing an enum for the location codes but it never seemed necessary. Would be helpful for validation around location input.
+* There's probably a chance to make naming more consistent with destinations. I'm not sure why I didn't change `To` and `From` early in the development
+
 
 ## Holiday Search
 Taking the two JSON files of flights and hotels as source data, please create a
