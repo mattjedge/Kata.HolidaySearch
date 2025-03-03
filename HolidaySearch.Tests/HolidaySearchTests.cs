@@ -47,6 +47,16 @@ namespace HolidaySearch.Tests
             Assert.That(results.First().Flight.Id, Is.EqualTo(7));
             Assert.That(results.First().Hotel.Id, Is.EqualTo(6));
         }
+
+        [Test]
+        public void Includes_TotalPrice_for_each_package()
+        {
+            var query = new HolidaySearchQuery([], ["LPA"], new DateOnly(2022, 11, 10), 14);
+            var results = _subject.SearchHolidays(query);
+
+            // flight = 125, hotel = 75 per night, 14 nights = 1050, total = 1175
+            Assert.That(results.First().TotalPrice, Is.EqualTo(1175));
+        }
         
         private static IEnumerable<FlightData> SeedFlightData()
         {
