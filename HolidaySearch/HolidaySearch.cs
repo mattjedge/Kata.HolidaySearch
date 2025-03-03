@@ -31,7 +31,7 @@ namespace HolidaySearch
 
         public IEnumerable<HolidaySearchResult> CreatePackageHolidaySearchResults(IEnumerable<HotelData> hotels, IEnumerable<FlightData> flights)
         {
-            return hotels.SelectMany(hotel => flights,
+            return hotels.SelectMany(hotel => flights.Where(flight => hotel.LocalAirports.Contains(flight.To)),
                 (hotel, flight) => new HolidaySearchResult(flight, hotel))
                 .OrderBy(package => package.Flight.Price + package.Hotel.PricePerNight)
                 .ToList();

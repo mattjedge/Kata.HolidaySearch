@@ -47,6 +47,15 @@ namespace HolidaySearch.Tests
             Assert.That(results.First().Flight.Id, Is.EqualTo(7));
             Assert.That(results.First().Hotel.Id, Is.EqualTo(6));
         }
+
+        [Test]
+        public void Only_maps_hotels_and_flights_with_matching_destination_codes()
+        {
+            var query = new HolidaySearchQuery([], ["AGP", "PMI"], new DateOnly(2023, 07, 01), 14);
+
+            var results = _subject.SearchHolidays(query);
+            Assert.That(results.All(x => x.Hotel.LocalAirports.Contains(x.Flight.To)));
+        }
         
         private static IEnumerable<FlightData> SeedFlightData()
         {

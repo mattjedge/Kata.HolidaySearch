@@ -16,6 +16,14 @@
     "departure_date": "2023-07-01"
   },
   {
+    "id": 13,
+    "airline": "Trans American Airlines",
+    "from": "MAN",
+    "to": "PMI",
+    "price": 170,
+    "departure_date": "2023-07-01"
+  },
+  {
     "id": 3,
     "airline": "Trans American Airlines",
     "from": "MAN",

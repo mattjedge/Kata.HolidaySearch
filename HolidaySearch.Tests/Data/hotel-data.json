@@ -94,7 +94,14 @@
     "arrival_date": "2023-07-01",
     "price_per_night": 45,
     "local_airports": [ "AGP" ],
-
+    "nights": 14
+  },
+  {
+    "id": 14,
+    "name": "Sol Katmandu Park & Resort",
+    "arrival_date": "2023-07-01",
+    "price_per_night": 60,
+    "local_airports": [ "PMI" ],
     "nights": 14
   },
   {
