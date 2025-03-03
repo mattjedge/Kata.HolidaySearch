@@ -13,12 +13,14 @@ namespace HolidaySearch.Tests
         [SetUp]
         public void SetUp()
         {
+            // real world scenario these would likely be mocked with Moq to test HolidaySearch
+            // without exercising other code paths
             _flightData = SeedFlightData();
             var flightSearch = new FlightSearch(_flightData);
             _hotelData = SeedHotelData();
             var hotelSearch = new HotelSearch(_hotelData);
 
-            _subject = new HolidaySearch(hotelSearch, flightSearch);
+            _subject = new HolidaySearch(hotelSearch, flightSearch, new PriceCalculator());
         }
 
         [Test]

@@ -4,7 +4,7 @@ using HolidaySearch.Search;
 
 namespace HolidaySearch
 {
-    public class HolidaySearch(ISearch<HotelData> hotelSearch, ISearch<FlightData> flightSearch)
+    public class HolidaySearch(ISearch<HotelData> hotelSearch, ISearch<FlightData> flightSearch, IPriceCalculator priceCalculator)
     {
         public IEnumerable<HolidaySearchResult> SearchHolidays(HolidaySearchQuery query)
         {
@@ -20,13 +20,10 @@ namespace HolidaySearch
         public IEnumerable<HolidaySearchResult> CreatePackageHolidaySearchResults(IEnumerable<HotelData> hotels, IEnumerable<FlightData> flights)
         {
             return hotels.SelectMany(hotel => flights,
-                (hotel, flight) => new HolidaySearchResult(flight, hotel, GetHolidayPrice(hotel, flight)))
+                (hotel, flight) => new HolidaySearchResult(flight, hotel, priceCalculator.GetTotalPrice(hotel, flight)))
                 .OrderBy(package => package.Flight.Price + package.Hotel.PricePerNight)
                 .ToList();
         }
-
-        // Potential to extract to Pricing service, handle deals and discounts etc
-        private double GetHolidayPrice(HotelData hotel, FlightData flight) => (hotel.PricePerNight * hotel.NumberOfNights) + flight.Price;
 
         private IEnumerable<IFilterStrategy<HotelData>> GenerateHotelSearchFilters(HolidaySearchQuery query)
         {
