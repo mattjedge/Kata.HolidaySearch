@@ -4,27 +4,15 @@ using HolidaySearch.Search;
 
 namespace HolidaySearch
 {
-    public record HolidaySearchQuery(string[] DepartingFrom, string[] TravelingTo, DateOnly DepartureDate, int Duration);
-    public record HolidaySearchResult(FlightData Flight, HotelData Hotel, double TotalPrice);
-
-    public class HolidaySearch
+    public class HolidaySearch(ISearch<HotelData> hotelSearch, ISearch<FlightData> flightSearch)
     {
-        private ISearch<HotelData> _hotelSearch;
-        private ISearch<FlightData> _flightSearch;
-
-        public HolidaySearch(ISearch<HotelData> hotelSearch, ISearch<FlightData> flightSearch)
-        {
-            _hotelSearch = hotelSearch;
-            _flightSearch = flightSearch;
-        }
-
         public IEnumerable<HolidaySearchResult> SearchHolidays(HolidaySearchQuery query)
         {
             var hotelFilters = GenerateHotelSearchFilters(query);
             var flightFilters = GenerateFlightSearchFilters(query);
 
-            var hotelResults = _hotelSearch.Search(hotelFilters);
-            var flightResults = _flightSearch.Search(flightFilters);
+            var hotelResults = hotelSearch.Search(hotelFilters);
+            var flightResults = flightSearch.Search(flightFilters);
 
             return CreatePackageHolidaySearchResults(hotelResults, flightResults);
         }
